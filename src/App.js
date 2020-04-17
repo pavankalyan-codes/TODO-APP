@@ -3,6 +3,7 @@ import FirstComponent from './components/learning-examples/FirstComponent';
 import SecondComponent from './components/learning-examples/SecondComponent';
 import ThirdComponent from './components/learning-examples/ThirdComponent';
 import './App.css'
+import './bootstrap.css'
 import TodoApp from './todo/TodoApp';
 import Counter from './components/counter/Counter';
 import CounterButton from './components/counter/Counter';
