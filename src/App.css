@@ -5,6 +5,9 @@
   height: 40px;
   background-color: #222222;
 }
+.textmuted{
+  color: #fff;
+}
 .App {
   text-align: center;
 }
