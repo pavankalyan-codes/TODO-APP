@@ -3,9 +3,11 @@ import axios from 'axios'
 
 
 class TodoDataService{
+    
 
     retrieveAllTodos(name){
-        return axios.get(`http://localhost:8080/users/${name}/todos`)
+        console.log("in to do service--------------------")
+        return axios.get(`http://localhost:8080/users/${name}/todos`)   
     }
     retrieveTodo(name,id){
         return axios.get(`http://localhost:8080/users/${name}/todos/${id}`)
@@ -13,6 +15,12 @@ class TodoDataService{
     
     deleteTodo(name,id){
         return axios.delete(`http://localhost:8080/users/${name}/todos/${id}`)
+    }
+    updateTodo(name,id,todo){
+        return axios.put(`http://localhost:8080/users/${name}/todos/${id}`,todo)
+    }
+    addTodo(name,todo){
+        return axios.post(`http://localhost:8080/users/${name}/todos`,todo)
     }
 
 

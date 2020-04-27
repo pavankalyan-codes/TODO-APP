@@ -2,13 +2,13 @@ import React, { Component } from 'react';
 import './App.css'
 import './bootstrap.css'
 import TodoApp from './todo/TodoApp';
- 
+import ExamComponent from './exam/ExamComponent'
 class App extends Component {
   render() {
     return (
       <div className="App">
         <TodoApp></TodoApp>
-            {/* <Counter /> */}
+        {/* <ExamComponent></ExamComponent> */}
       </div>
     );
   }
