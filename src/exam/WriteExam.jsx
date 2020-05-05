@@ -1,154 +1,95 @@
 import React,{ Component } from "react";
 import '../App.css'
-
+import OAPAuthenticationService from '../onlineExamPortal/components/OAPAuthenticationService.js'
 class WriteExam extends Component
 {
     constructor(props){
         super(props)
         this.state={
             currentQuestion:'',
-            currentQuestionId:-1,
-            options:[],
+            currentQuestionId:'',
+            optiona:'',
+            optionb:'',
+            optionc:'',
+            optiond:'',
             questions:[
-                {
-                    id:1,
-                    question:"Who directed Most rated Netflix series",
-                    options:{
-                        a:"Bryan Cranston",
-                        b:"Vince Gilligan",
-                        c:"David Fincher",
-                        d:"David Lynch"
-                    }
-                },
-                {
-                    id:2,
-                    question:"Who directed Most rated Netflix series",
-                    options:{
-                        a:"Bryan Cranston",
-                        b:"Vince Gilligan",
-                        c:"David Fincher",
-                        d:"David Lynch"
-                    }
-                },
-                {
-                    id:3,
-                    question:"Who directed Most rated Netflix series",
-                    options:{
-                        a:"Bryan Cranston",
-                        b:"Vince Gilligan",
-                        c:"David Fincher",
-                        d:"David Lynch"
-                    }
-                },
-                {
-                    id:4,
-                    question:"Who directed Most rated Netflix series",
-                    options:{
-                        a:"Bryan Cranston",
-                        b:"Vince Gilligan",
-                        c:"David Fincher",
-                        d:"David Lynch"
-                    }
-                },
-                {
-                    id:5,
-                    question:"Who directed Most rated Netflix series",
-                    options:{
-                        a:"Bryan Cranston",
-                        b:"Vince Gilligan",
-                        c:"David Fincher",
-                        d:"David Lynch"
-                    }
-                },
-                {
-                    id:6,
-                    question:"Who directed Most rated Netflix series",
-                    options:{
-                        a:"Bryan Cranston",
-                        b:"Vince Gilligan",
-                        c:"David Fincher",
-                        d:"David Lynch"
-                    }
-                },
-                {
-                    id:7,
-                    question:"Who directed Most rated Netflix series",
-                    options:{
-                        a:"Bryan Cranston",
-                        b:"Vince Gilligan",
-                        c:"David Fincher",
-                        d:"David Lynch"
-                    }
-                }
-                ,
-                {
-                    id:8,
-                    question:"Who directed Most rated Netflix series",
-                    options:{
-                        a:"Bryan Cranston",
-                        b:"Vince Gilligan",
-                        c:"David Fincher",
-                        d:"David Lynch"
-                    }
-                }
-                ,
-                {
-                    id:9,
-                    question:"Who directed Most rated Netflix series",
-                    options:{
-                        a:"Bryan Cranston",
-                        b:"Vince Gilligan",
-                        c:"David Fincher",
-                        d:"David Lynch"
-                    }
-                }
-                ,
-                {
-                    id:10,
-                    question:"Who directed Most rated Netflix series",
-                    options:{
-                        a:"Bryan Cranston",
-                        b:"Vince Gilligan",
-                        c:"David Fincher",
-                        d:"David Lynch"
-                    }
-                }
-
-            ]
+                
+            ],
+            answers:{}
             
         }
         
     }
     componentDidMount(){
         
-        console.log(this.state.questions[0].question);
-        
+        //console.log(this.state.questions[0].question);
+        OAPAuthenticationService.fetchExam("Assessment001")
+        .then( (reponse) =>{
+            console.log(reponse)
+            this.setState({
+                questions:reponse.data.questions,
+                currentQuestion:reponse.data.questions[0].question,
+                currentQuestionId:reponse.data.questions[0].qid,
+                optiona:reponse.data.questions[0].options[0],
+                optionb:reponse.data.questions[0].options[1],
+                optionc:reponse.data.questions[0].options[2],
+                optiond:reponse.data.questions[0].options[3],
+
+
+
+            })
+        })
        
         
     }
     
-    handleQuestionClicked(){
-        console.log("clicked!");
+    handleQuestionClicked= (e) => {
+        let qindex=e.currentTarget.id;
+        
+        this.setState({
+            
+            currentQuestion:this.state.questions[qindex-1].question,
+                currentQuestionId:this.state.questions[qindex-1].qid,
+                optiona:this.state.questions[qindex-1].options[0],
+                optionb:this.state.questions[qindex-1].options[1],
+                optionc:this.state.questions[qindex-1].options[2],
+                optiond:this.state.questions[qindex-1].options[3],
+        })
+      }
+    handleOptionClicked = (e) =>{
+        let opindex=e.currentTarget.id;
+        let ans=e.currentTarget.textContent
+        var newInput = Object.assign({}, 
+            this.state.answers, {[this.state.currentQuestionId]: ans});
+        this.setState({
+            answers:newInput
+        },function() {
+            console.log(this.state.answers)}
+        )
+        
+        document.getElementById(opindex).style.background="#66ff66"
+        if(opindex!='a')
+            document.getElementById('a').style.background="#fff"
+        if(opindex!='b')
+            document.getElementById('b').style.background="#fff"
+        if(opindex!='c')
+            document.getElementById('c').style.background="#fff"
+        if(opindex!='d')
+            document.getElementById('d').style.background="#fff"
     }
     
     render(){
         return(
  
             <div className="container-fluid">
-            <div className="row">
-                <div className="col-lg-3 " style={{backgroundColor : '#e6fffa'}}>
-                    <h3>Questions </h3>
-                </div>
-                <div className="col-lg-9 " style={{backgroundColor : '#b3fff0'}}>
-                    <h3 id="timer"> Timer </h3>
-                </div>
+            <div className="row examarea">
                 <div className="col-lg-3" id="left">
-                    <div className="card" style={{backgroundColor : 'Pink'}}>
+                    <div className="box" >
                         {
                             this.state.questions.map(
                                 question =>
-                                <div className="row card" key={question.id} onClick={this.handleQuestionClicked} >
-                                    <div className="col-4">{question.id}</div>
+                                <div className="row card qlist" id={question.qid} key={question.qid} onClick={this.handleQuestionClicked} >
+                                    <div className="col-4">{question.qid}</div>
                                     <div className="col-8">{question.question}</div>
                                    
                                 </div>
@@ -157,15 +98,23 @@ class WriteExam extends Component
                         }
                     </div>
                 </div>
-                <div className="col-lg-9 " id="right" >
-                    <h3 className="">{this.state.questions[0].id+"."+this.state.questions[0].question}</h3>
-                    <ul>
+                <div className="col-lg-9 questionArea" id="right" >
+                    <h3 >{this.state.currentQuestionId+"."+this.state.currentQuestion}</h3>
+                    
 
-                        <li className="card"><button className="btn btn-info">{this.state.questions[0].options.a}</button></li>
-                        <li className="card"><button className="btn btn-info">{this.state.questions[0].options.b}</button></li>
-                        <li className="card"><button className="btn btn-info">{this.state.questions[0].options.c}</button></li>
-                        <li className="card"><button className="btn btn-info">{this.state.questions[0].options.d}</button></li>
-                    </ul>
+
+                        <div className="row justify-content-center">
+                            <div className="card  optionarea col-4 " id="a" onClick={this.handleOptionClicked}>{this.state.optiona}</div>
+                            <div className="card optionarea col-4" id="b" onClick={this.handleOptionClicked}>{this.state.optionb}</div>
+                        </div><br></br>
+                        <div className="row justify-content-center">
+                            <div className="card optionarea col-4" id="c" onClick={this.handleOptionClicked}>{this.state.optionc}</div>
+                            <div className="card optionarea col-4" id="d" onClick={this.handleOptionClicked}>{this.state.optiond}</div>
+
+                        </div>
+
+                         
+                   
 
                 </div>
             </div>

@@ -7,6 +7,7 @@ import HeaderComponent from '../src/onlineExamPortal/components/HeaderComponent'
 import FooterComponent from '../src/onlineExamPortal/components/FooterComponent'
 import SignIn from '../src/onlineExamPortal/components/SignIn'
 import SignUp from '../src/onlineExamPortal/components/SignUp'
+import Dashboard from '../src/onlineExamPortal/components/Dashboard'
 import WriteExam from './exam/WriteExam'
 
 class FinalExamApp extends Component {
@@ -20,7 +21,9 @@ class FinalExamApp extends Component {
                     <Route path="/signin" component={SignIn} />
                     <Route path="/signup" component={SignUp} />
                     <Route path="/login" component={Login} />
-                    <Route path="/dashboard" component={WriteExam}/>
+                    <Route path="/testing" component={WriteExam} />
+
+                    <Route path="/dashboard" component={Dashboard}/>
                     <FooterComponent></FooterComponent>
                 </Router>
 

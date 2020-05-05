@@ -16,5 +16,11 @@ class OAPAuthenticationService{
             password
         })
     }
+    fetchExam(_id)
+    {
+        return axios.post(`http://localhost:8080/FetchExam`,{
+            _id
+        })
+    }
 }
 export default new OAPAuthenticationService()
