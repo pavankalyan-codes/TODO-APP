@@ -1,13 +1,12 @@
 import React, { Component } from 'react';
-import './App.css'
-import './bootstrap.css'
-import TodoApp from './todo/TodoApp';
-import ExamComponent from './exam/ExamComponent'
+import './App.css';
+import './bootstrap.css';
+import FinalExam from './FinalExamApp';
 class App extends Component {
   render() {
     return (
       <div className="App">
-        <TodoApp></TodoApp>
+        <FinalExam></FinalExam>
         {/* <ExamComponent></ExamComponent> */}
       </div>
     );
