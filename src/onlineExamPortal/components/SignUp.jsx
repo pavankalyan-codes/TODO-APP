@@ -9,6 +9,8 @@ import React, { Component } from 'react';
 import { Link } from 'react-router-dom';
 import {Formik,Form,Field, ErrorMessage} from 'formik'
 import OAPAuthenticationService from './OAPAuthenticationService.js'
+import { CircularProgress } from "@material-ui/core";
+
 
 
 
@@ -27,9 +29,16 @@ class SignUp extends Component {
           studentpassword:'',
           registerSuccess:false,
           registerFailed:false,
-          errorMessage:''
+          errorMessage:'',
+          isLoading:false
       }
       this.onSubmit=this.onSubmit.bind(this)
+      this.toggleLoading=this.toggleLoading.bind(this);
+  }
+  toggleLoading = () => {
+    this.setState((prevState, props) => ({
+      isLoading: !prevState.isLoading
+    }))
   }
   nameHandleChange = (event) =>
   {
@@ -77,6 +86,7 @@ class SignUp extends Component {
             });
   }
   onSubmit(values){
+     this.toggleLoading()
       console.log(this.state.studentid)
       if(this.state.studentname==="" || this.state.studentid==="" || this.state.studentmail==="" || this.state.studentpassword==="")
       {
@@ -85,6 +95,7 @@ class SignUp extends Component {
               registerFailed:true,
               errorMessage:"Please fill all the Fields"
           })
+          this.toggleLoading()
           
       }
       else
@@ -103,6 +114,7 @@ class SignUp extends Component {
                     studentpassword:''
                     
                 })
+                this.toggleLoading()
             }
             else
             {
@@ -111,6 +123,7 @@ class SignUp extends Component {
                     registerFailed:true,
                     registerSuccess:false
                 })
+                this.toggleLoading()
             }
       
         })
@@ -122,6 +135,7 @@ class SignUp extends Component {
             })
         })
       }
+      
 }
   
   render(){
@@ -130,6 +144,7 @@ class SignUp extends Component {
     <Container component="main" maxWidth="xs">
       <CssBaseline />
       <div >
+
         
         <Typography component="h1" variant="h5">
           Sign Up
@@ -159,7 +174,7 @@ class SignUp extends Component {
                     fullWidth
                     id="name"
                     onChange={this.nameHandleChange}
-                    label="Student Name"
+                    label="Student Name *"
                     name="name"
                     value={this.state.studentname}
                     autoComplete="name"
@@ -173,7 +188,7 @@ class SignUp extends Component {
                     id="sid"
                     value={this.state.studentid}
                     onChange={this.idHandleChange}
-                    label="Studen ID"
+                    label="Studen ID *"
                     name="sid"
                     autoComplete="sid"
                     
@@ -186,7 +201,7 @@ class SignUp extends Component {
                     id="email"
                     value={this.state.studentmail}
                     onChange={this.emailHandleChange}
-                    label="Email"
+                    label="Email *"
                     name="email"
                     autoComplete="email"
                 
@@ -197,7 +212,7 @@ class SignUp extends Component {
                     
                     fullWidth
                     name="password"
-                    label="Password"
+                    label="Password *"
                     type="password"
                     id="password"
                     value={this.state.studentpassword}
@@ -210,12 +225,14 @@ class SignUp extends Component {
                     fullWidth
                     variant="contained"
                     color="primary"
+                    disabled={this.state.isLoading}
                 >
-                    Sign Up
+                   {this.state.isLoading && <CircularProgress size={20} color="#" /> }
+                  {!this.state.isLoading && "Signup"}
                 </Button>
                 <Grid container style={{marginTop:20}}>
                     <Grid item xs>
-                    <Link to="\" variant="body2">
+                    <Link to="" variant="body2">
                         Forgot password?
                     </Link>
                     </Grid>

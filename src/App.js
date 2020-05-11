@@ -2,11 +2,16 @@ import React, { Component } from 'react';
 import './App.css';
 import './bootstrap.css';
 import FinalExam from './FinalExamApp';
+import { SnackbarProvider } from 'notistack';
+
 class App extends Component {
   render() {
     return (
       <div className="App">
+        <SnackbarProvider >
+
         <FinalExam></FinalExam>
+        </SnackbarProvider>
         {/* <ExamComponent></ExamComponent> */}
       </div>
     );

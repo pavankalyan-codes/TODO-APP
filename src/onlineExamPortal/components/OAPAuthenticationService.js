@@ -22,5 +22,31 @@ class OAPAuthenticationService{
             _id
         })
     }
+    fetchAllExams()
+    {
+        return axios.get(`http://localhost:8080/FetchAll`)
+    }
+    submitExam(examid,answers)
+    {
+        return axios.post(`http://localhost:8080/SubmitExam`,{
+            examid,
+            answers
+        })
+    }
+    getProfile(_id)
+    {   
+        return axios.post(`http://localhost:8080/getProfile`,{
+            _id
+        })
+    }
+    updateProfile(_id,name,email,password)
+    {   
+        return axios.post(`http://localhost:8080/updateProfile`,{
+            _id,
+            name,
+            email,
+            password
+        })
+    }
 }
 export default new OAPAuthenticationService()

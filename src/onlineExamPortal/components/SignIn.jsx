@@ -1,4 +1,3 @@
-import Button from '@material-ui/core/Button';
 import Container from '@material-ui/core/Container';
 import CssBaseline from '@material-ui/core/CssBaseline';
 import Grid from '@material-ui/core/Grid';
@@ -10,6 +9,12 @@ import React, { Component } from 'react';
 import { Link } from 'react-router-dom';
 import RaisedButton from 'material-ui/RaisedButton';
 import OAPAuthicationService from './OAPAuthenticationService.js'
+import { trackPromise } from 'react-promise-tracker';
+import Button from '@material-ui/core/Button';
+import '../../App.css' 
+import { CircularProgress } from "@material-ui/core";
+
+
 
 class SignIn extends Component {
 
@@ -22,30 +27,35 @@ class SignIn extends Component {
         studentid:'',
         password:'',
         description:'',
-        hasLoginFailed:false
+        hasLoginFailed:false,
+        isLoading:false
 
     }
-    this.onSubmit=this.onSubmit.bind(this)
+    this.toggleLoading=this.toggleLoading.bind(this);
+    this.onSubmit=this.onSubmit.bind(this);
     
   }
 
   onSubmit(values){
-      console.log("login clicked"+this.state.studentid+"-"+this.state.password);
-      OAPAuthicationService.makeLogin(this.state.studentid,this.state.password)
-       .then( (response) =>{
-        console.log(response)
-        if(response.data.message==="Success")
-        {
-            this.props.history.push("/dashboard")
-        }
-        else
-        {
-            this.setState({
-                hasLoginFailed:true
-            })
-        }
-         
-    })
+      this.toggleLoading()
+      console.log("login clicked"+values.studentid);
+      OAPAuthicationService.makeLogin(values.studentid,values.password)
+        .then( (response) =>{
+          console.log(response)
+          if(response.data.message==="Success")
+          {
+              this.props.history.push("/home")
+          }
+          else
+          {
+              this.setState({
+                  hasLoginFailed:true
+              })
+          }
+          this.toggleLoading()
+      })
+      
+      
   }
   
   studentIdHandleChange = (event) => {
@@ -55,18 +65,30 @@ class SignIn extends Component {
     
   };
 
+
   studentPasswordHandleChange = (event) => {
       this.setState({
           password: event.target.value,
       }, () => { console.log(this.state.password) });
   };
+  toggleLoading = () => {
+    this.setState((prevState, props) => ({
+      isLoading: !prevState.isLoading
+    }))
+  }
+
+  componentDidMount(){
+    console.log("my path"+"---------------"+window.location.pathname)
+  }
   
 
   render(){
     let {description,studentid,password}=this.state
   return (
     <Container component="main" maxWidth="xs">
+      
       <CssBaseline />
+      
       <div id="signinform" >
         
         <Typography component="h1" variant="h5">
@@ -86,6 +108,7 @@ class SignIn extends Component {
             (props) => (
                 <Form>
                 {this.state.hasLoginFailed && <div className="alert alert-danger">Invalid Credentials</div>}
+
                 <TextField
                     variant="outlined"
                     margin="normal"
@@ -115,11 +138,14 @@ class SignIn extends Component {
                     fullWidth
                     variant="contained"
                     color="primary"
-                    style={{marginTop:20}}
+                    style={{marginTop:5}}
+                    disabled={this.state.isLoading}
                 >
-                
-                    Sign In
+                   
+                  {this.state.isLoading && <CircularProgress size={20} color="#" /> }
+                  {!this.state.isLoading && "Signin"}
                 </Button>
+                
                 
                 <Grid container style={{marginTop:20}}>
                     <Grid item xs>
