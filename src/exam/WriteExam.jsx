@@ -91,6 +91,7 @@ class WriteExam extends Component
                 optionb:reponse.data.questions[0].options[1],
                 optionc:reponse.data.questions[0].options[2],
                 optiond:reponse.data.questions[0].options[3],
+                minutes:reponse.data.minutes
 
 
 
@@ -218,7 +219,7 @@ class WriteExam extends Component
     submitExam()
     {
         console.log("exam submitted");
-        
+        this.toggle()
         OAPAuthenticationService.submitExam("Assessment001",this.state.answers)
          .then( (response) =>{
              console.log(response);

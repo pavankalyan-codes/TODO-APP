@@ -48,5 +48,13 @@ class OAPAuthenticationService{
             password
         })
     }
+    createExam(_id,subject,questions)
+    {   
+        return axios.post(`http://localhost:8080/CreateExam`,{
+            _id,
+            subject,
+            questions
+        })
+    }
 }
 export default new OAPAuthenticationService()

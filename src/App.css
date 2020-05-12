@@ -27,7 +27,16 @@ background-color: transparent; }
   margin-left: 250px;
   text-align: center;
   margin: 0 auto;
+  margin-top: -10px;
 
+}
+.myexamheader{
+  width: 600px;
+  height: 130px;
+  text-align: center;
+  margin: 0 auto;
+  margin-top: -20px;
+  
 }
 .textarea{
   width: 100px !important;
@@ -604,4 +613,19 @@ body {
   margin-left: 250px;
   margin-right: 200px;
   padding:10px;
+}
+.results{
+  margin-left: 290px;
+  margin-top: 50px;
+  margin-right: 20px;
+}
+.myicon {
+  color: rgb(17, 223, 17)
+}
+.mywrongicon{
+  color:red
+}
+#myfab{
+  background-color: #1fc919;
+  color: #fff;
 }

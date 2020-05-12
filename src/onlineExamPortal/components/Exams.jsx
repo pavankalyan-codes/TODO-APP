@@ -45,7 +45,7 @@ class Exams extends Component{
                             
                             this.state.Exams.map(
                                 exam =>
-                                <div class=" card border border-info rounded-lg myexcard" style={{width: "160px",height:"200px",marginLeft:"30px"}}>
+                                <div class=" card border border-info rounded-lg myexcard" style={{width: "160px",height:"200px",marginLeft:"30px",marginTop:"30px"}}>
                                     <img src={examImg} class="card-img-top" alt="..." style={{height:"100px"}}></img>
                                     <div class="card-body text-center">
                                         <span style={{fontSize:"15px"}} class="card-title">{exam._id}</span>
