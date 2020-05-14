@@ -23,7 +23,7 @@ background-color: transparent; }
   
 }
 .myexam{
-  width: 600px;
+  width: 800px;
   margin-left: 250px;
   text-align: center;
   margin: 0 auto;
@@ -31,7 +31,7 @@ background-color: transparent; }
 
 }
 .myexamheader{
-  width: 600px;
+  width: 800px;
   height: 130px;
   text-align: center;
   margin: 0 auto;
@@ -615,9 +615,12 @@ body {
   padding:10px;
 }
 .results{
-  margin-left: 290px;
+ 
   margin-top: 50px;
   margin-right: 20px;
+}
+.resultsDiv{
+  margin-left: 280px;
 }
 .myicon {
   color: rgb(17, 223, 17)
@@ -628,4 +631,12 @@ body {
 #myfab{
   background-color: #1fc919;
   color: #fff;
+}
+.mymodal
+{
+  width:300px;
+  text-align: center;
+  margin: 0 auto;
+  margin-top: 100px;
+  margin-bottom: 100px;
 }

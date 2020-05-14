@@ -7,6 +7,17 @@ class OAPAuthenticationService{
             password
         })
     }
+    registerSuccessfulLogin(userId)
+    {
+        sessionStorage.setItem('authenticatedUser',userId);
+
+    }
+    getLoggedInUsername()
+    {
+        let user=sessionStorage.getItem('authenticatedUser')
+        if(user===null) return ''
+        return user
+    }
     createAccount(name,_id,email,password)
     {
         return axios.post(`http://localhost:8080/Register`,{
@@ -16,21 +27,31 @@ class OAPAuthenticationService{
             password
         })
     }
-    fetchExam(_id)
+    fetchExam(examId,studentId)
     {
-        return axios.post(`http://localhost:8080/FetchExam`,{
-            _id
+        return axios.post(`http://localhost:8080/getQuestions`,{
+            examId,
+            studentId
         })
     }
     fetchAllExams()
     {
         return axios.get(`http://localhost:8080/FetchAll`)
     }
-    submitExam(examid,answers)
+    submitExam(examId,studentId,date,submittedAnswers)
     {
-        return axios.post(`http://localhost:8080/SubmitExam`,{
-            examid,
-            answers
+        return axios.post(`http://localhost:8080/saveExam`,{
+            examId,
+            studentId,
+            date,
+            submittedAnswers
+        })
+    }
+    getScore(examId,studentId)
+    {
+        return axios.post(`http://localhost:8080/getScores`,{
+            examId,
+            studentId
         })
     }
     getProfile(_id)
@@ -48,11 +69,13 @@ class OAPAuthenticationService{
             password
         })
     }
-    createExam(_id,subject,questions)
+    createExam(_id,subject,minutes,marksForEach,questions)
     {   
         return axios.post(`http://localhost:8080/CreateExam`,{
             _id,
             subject,
+            minutes,
+            marksForEach,
             questions
         })
     }

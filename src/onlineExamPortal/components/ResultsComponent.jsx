@@ -41,7 +41,7 @@ class ResultsComponent extends Component
                     <td>{moment(this.props.date).format('DD-MM-YYYY HH:mm:ss ')}</td>
                     <td>{this.props.correct}</td>
                     <td>{this.props.incorrect}</td>
-                    <td>{this.props.score}/{this.props.correct+this.props.incorrect}</td>
+                    <td>{this.props.score}/{this.props.total}</td>
                     </tr>
                     
                 </tbody>

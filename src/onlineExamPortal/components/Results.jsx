@@ -7,7 +7,7 @@ import ResultsComponent from './ResultsComponent'
 class Results extends Component{
     render(){
         return(
-            <>
+            <div >
             <div class = "page-header" style={{marginLeft:"250px"}}>
             <h1>
                 Attempted Assessments
@@ -15,10 +15,11 @@ class Results extends Component{
             </h1>
             </div>
             <hr></hr>
-            <ResultsComponent AssessmentID="MyExam001" Subject="OOAD" date={new Date} correct={15} incorrect={5} score={15} />
-            <ResultsComponent AssessmentID="MyExam001" Subject="OOAD" date={new Date} correct={15} incorrect={5} score={15} />
-            
-            </>
+            <div className="resultsDiv">
+                <ResultsComponent AssessmentID="MyExam001" Subject="OOAD" date={new Date} correct={15} incorrect={5} score={15} />
+                <ResultsComponent AssessmentID="MyExam001" Subject="OOAD" date={new Date} correct={15} incorrect={5} score={15} />
+            </div>
+            </div>
             )
     }
 }

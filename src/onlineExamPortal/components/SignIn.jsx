@@ -44,6 +44,7 @@ class SignIn extends Component {
           console.log(response)
           if(response.data.message==="Success")
           {
+              OAPAuthicationService.registerSuccessfulLogin(values.studentid)
               this.props.history.push("/home")
           }
           else

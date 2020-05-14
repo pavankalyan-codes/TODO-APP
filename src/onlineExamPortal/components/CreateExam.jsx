@@ -52,6 +52,7 @@ class CreateExam extends Component
         this.createExam=this.createExam.bind(this);
         this.toggleLoading=this.toggleLoading.bind(this);
         this.toggle = this.toggle.bind(this);
+        this.addExam=this.addExam.bind(this);
 
     }
     toggleLoading = () => {
@@ -104,15 +105,29 @@ class CreateExam extends Component
     {
         this.toggleLoading()
         this.toggle()
-        OAPAuthenticationService.createExam(this.state.examid,this.state.subject,this.state.questions)
+        // OAPAuthenticationService.createExam(this.state.examid,this.state.subject,this.state.questions)
+        // .then(
+        //     (response) =>{
+        //         console.log(response)
+        //         this.toggleLoading()
+        //     }
+            
+        // )
+        this.toggleLoading()
+    } 
+    addExam(){
+        this.toggleLoading()
+        OAPAuthenticationService.createExam(this.state.examid,this.state.subject,this.state.time,this.
+            state.marksForEach,this.state.questions)
         .then(
             (response) =>{
                 console.log(response)
                 this.toggleLoading()
+                this.toggle()
             }
             
         )
-    }  
+    } 
     clearFields()
     {
             this.setState({
@@ -138,7 +153,20 @@ class CreateExam extends Component
                 <div class={this.state.modal? 'modal is-active':'modal'}>
                     <div class="modal-background"></div>
                     <div class="modal-content">
-                        <span>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Aenean efficitur sit amet massa fringilla egestas. Nullam condimentum luctus turpis.</span>
+                        <div class="field mymodal">
+                            <label class="label">Time For Exam(in minutes)</label>
+                            <div class="control">
+                                <input class="input" type="number" name="time" onChange={this.handleChange} min={1} placeholder="Enter number of minutes"/>
+                            </div>
+                            <label class="label" style={{marginTop:"50px"}}>Marks for each Correct answer</label>
+                            <div class="control" >
+                                <input class="input" type="number" name="marksForEach" onChange={this.handleChange} min={1} placeholder="Marks"/>
+                            </div>
+
+                            <Button style={{marginTop:"30px"}} className={ 'button is-success' + (this.state.isLoading ? ' is-loading' : '') } onClick={this.addExam}>Add Exam</Button>
+
+
+                        </div>
                     </div>
                     <button class="modal-close is-large" onClick={this.toggle} aria-label="close"></button>
                 </div>

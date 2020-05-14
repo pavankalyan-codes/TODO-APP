@@ -5,7 +5,7 @@ import OAPAuthenticationService from '../onlineExamPortal/components/OAPAuthenti
 import { Button, Modal, ModalFooter, ModalHeader,ModalBody} from 'reactstrap';
 import $ from "jquery"
 import queryString from 'query-string'
-
+import ResultsComponent from '../onlineExamPortal/components/ResultsComponent'
 
 
 class WriteExam extends Component
@@ -16,13 +16,23 @@ class WriteExam extends Component
             actions: [],
 
             currentExamId:'',
+            studentId:'',
 
             malpracticeCount:0,
 
-            minutes: 3,
+            minutes: -1,
             seconds: 0,
             modal: false,
             fade: true,
+
+            isExamFinished:'',
+
+            submissionDate:'',
+            correct:'',
+            incorrect:'',
+            total:'',
+            score:'',
+
 
             currentQuestion:'',
             currentQuestionId:'',
@@ -44,6 +54,7 @@ class WriteExam extends Component
         this.highlightCurrent=this.highlightCurrent.bind(this);
         this.toggle = this.toggle.bind(this);
         this.submitExam=this.submitExam.bind(this);
+        this.getScores=this.getScores.bind(this);
         
     }
     
@@ -51,53 +62,73 @@ class WriteExam extends Component
     componentDidMount(){
         var self=this
         var mywindow;
-        $(window).on("blur focus", function(e) {
-            var prevType = $(this).data("prevType");
-            var count=0
-            if (prevType != e.type) {   //  reduce double fire issues
-                switch (e.type) {
-                    case "blur":
-                        if(self.state.malpracticeCount>=1)
-                        {
-                            alert("Mal practice! your exam is being auto submitted!")
-                            console.log("--------------------------"+count)
-                            self.fakeSubmit()
-                        }
-                        else{
-                            alert('This is first and last warning,next time exam will auto submit')
-                            self.setState({malpracticeCount:1})
-                        }
-                        break;
-                    case "focus":
-                        
-                        break;
-                }
-            }
         
-            $(this).data("prevType", e.type);
-        })
         //console.log(this.state.questions[0].question);
         var myExamId=queryString.parse(this.props.location.search)
         console.log('--------------------------------------------im exmaid------------'+myExamId.ExamId);
-        OAPAuthenticationService.fetchExam(myExamId.ExamId)
+        let userid=OAPAuthenticationService.getLoggedInUsername();
+        this.setState({
+            currentExamId:myExamId.ExamId,
+            studentId:userid
+        })
+        OAPAuthenticationService.fetchExam(myExamId.ExamId,userid)
         .then( (reponse) =>{
             console.log(reponse)
-            this.setState({
-                questions:reponse.data.questions,
-                currentQuestion:reponse.data.questions[0].question,
-                currentQuestionId:reponse.data.questions[0].qid,
-                prevQuesId:reponse.data.questions[0].qid,
-                optiona:reponse.data.questions[0].options[0],
-                optionb:reponse.data.questions[0].options[1],
-                optionc:reponse.data.questions[0].options[2],
-                optiond:reponse.data.questions[0].options[3],
-                minutes:reponse.data.minutes
+
+            if(reponse.data==='')
+            {
+                clearInterval(this.myInterval)
+                this.setState({
+                    isExamFinished:true
+                })
+                this.getScores();
+            }
+            else
+            {
+                this.setState({
+                    isExamFinished:false,
+                    questions:reponse.data.questions,
+                    currentQuestion:reponse.data.questions[0].question,
+                    currentQuestionId:reponse.data.questions[0].qid,
+                    prevQuesId:reponse.data.questions[0].qid,
+                    optiona:reponse.data.questions[0].options[0],
+                    optionb:reponse.data.questions[0].options[1],
+                    optionc:reponse.data.questions[0].options[2],
+                    optiond:reponse.data.questions[0].options[3],
+                    minutes:reponse.data.minutes
 
 
 
-            },function() {
-                console.log("im in highlight")
-                this.highlightCurrent()})
+                },function() {
+                    console.log("im in highlight")
+                    this.highlightCurrent()}
+                 ,$(window).on("blur focus", function(e) {
+                    var prevType = $(this).data("prevType");
+                    var count=0
+                    if (prevType != e.type) {   //  reduce double fire issues
+                        switch (e.type) {
+                            case "blur":
+                                if(self.state.malpracticeCount>=1)
+                                {
+                                    alert("Mal practice! your exam is being auto submitted!")
+                                    console.log("--------------------------"+count)
+                                    self.fakeSubmit()
+                                }
+                                else{
+                                    alert('This is first and last warning,next time exam will auto submit')
+                                    self.setState({malpracticeCount:1})
+                                }
+                                break;
+                            case "focus":
+                                
+                                break;
+                        }
+                    }
+                
+                    $(this).data("prevType", e.type);
+                })
+                 )
+            }
         })
 
         this.myInterval = setInterval(() => {
@@ -188,7 +219,7 @@ class WriteExam extends Component
         console.log("new arr"+newarr)
         
 
-        var newInp={"qid":this.state.currentQuestionId,"answer": ans,"selectedOption":opindex}
+        var newInp={"qid":this.state.currentQuestionId,"submittedresponse": ans,"selectedOption":opindex}
         newarr[this.state.currentQuestionId]=newInp
         this.setState({
             answers:newarr
@@ -220,16 +251,51 @@ class WriteExam extends Component
     {
         console.log("exam submitted");
         this.toggle()
-        OAPAuthenticationService.submitExam("Assessment001",this.state.answers)
+        OAPAuthenticationService.submitExam(this.state.currentExamId,this.state.studentId,Date.now(),this.state.answers)
          .then( (response) =>{
              console.log(response);
          })
+    }
+    getScores()
+    {
+        let userid=OAPAuthenticationService.getLoggedInUsername();
+        var myExamId=queryString.parse(this.props.location.search)
+        OAPAuthenticationService.getScore(myExamId.ExamId,userid)
+         .then(
+             (response) =>{
+                console.log(response)
+                 if(response.data!='')
+                 {
+                        console.log(response);
+                        this.setState({
+                            submissionDate:response.data.submittedDate,
+                            correct:response.data.correct,
+                            incorrect:response.data.incorrect,
+                            total:response.data.total,
+                            score:response.data.score
+                        })
+                 }
+             }
+         )
     }
     
     render(){
         
         const { minutes, seconds } = this.state
 
+
+        if(this.state.isExamFinished)
+        {
+            return(
+                <div>
+                    <div class="alert alert-danger" role="alert">
+                        Your Exam is already finished!
+                    </div>
+                    
+                    <ResultsComponent AssessmentID={this.state.currentExamId} Subject="OOAD" date={this.state.submissionDate} correct={this.state.correct} incorrect={this.state.incorrect} score={this.state.score} total={this.state.total} />
+                </div>
+            )
+        }
         return(
             
             <div className="container-fluid">
