@@ -3,7 +3,8 @@ class Logout extends Component{
     render(){
         return(
             <div>
-                This is Logout page
+                <link href="https://cdnjs.cloudflare.com/ajax/libs/bulma/0.6.1/css/bulma.min.css" rel="stylesheet"/>
+
             </div>
         )
     }

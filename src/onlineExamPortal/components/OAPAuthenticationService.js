@@ -54,6 +54,12 @@ class OAPAuthenticationService{
             studentId
         })
     }
+    getScoresByStudentId(studentId)
+    {
+        return axios.post(`http://localhost:8080/getScoresByStudentId`,{
+            studentId
+        })
+    }
     getProfile(_id)
     {   
         return axios.post(`http://localhost:8080/getProfile`,{

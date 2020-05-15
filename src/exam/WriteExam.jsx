@@ -7,6 +7,10 @@ import $ from "jquery"
 import queryString from 'query-string'
 import ResultsComponent from '../onlineExamPortal/components/ResultsComponent'
 
+import moment from 'moment'
+
+import { CircularProgress } from "@material-ui/core";
+
 
 class WriteExam extends Component
 {
@@ -14,6 +18,10 @@ class WriteExam extends Component
         super(props)
         this.state={
             actions: [],
+
+            isLoading:false,
+
+            myflag:0,
 
             currentExamId:'',
             studentId:'',
@@ -26,6 +34,7 @@ class WriteExam extends Component
             fade: true,
 
             isExamFinished:'',
+            doLoadExam:'',
 
             submissionDate:'',
             correct:'',
@@ -34,7 +43,7 @@ class WriteExam extends Component
             score:'',
 
 
-            currentQuestion:'',
+            currentQuestion:0,
             currentQuestionId:'',
             prevQuesId:'',
             optiona:'',
@@ -55,10 +64,28 @@ class WriteExam extends Component
         this.toggle = this.toggle.bind(this);
         this.submitExam=this.submitExam.bind(this);
         this.getScores=this.getScores.bind(this);
+        this.toggleLoading=this.toggleLoading.bind(this);
+        this.autoSubmit=this.autoSubmit.bind(this);
+        this.shuffleQuestions=this.shuffleQuestions.bind(this);
         
     }
     
-    
+    toggleLoading = () => {
+        this.setState((prevState, props) => ({
+          isLoading: !prevState.isLoading
+        }))
+      }
+    shuffleQuestions(myquestions)
+    {
+        for (var i = myquestions.length - 1; i > 0; i--) {
+            var j = Math.floor(Math.random() * (i + 1));
+            var temp = myquestions[i];
+            myquestions[i] = myquestions[j];
+            myquestions[j] = temp;
+        }
+        return myquestions;
+
+    }
     componentDidMount(){
         var self=this
         var mywindow;
@@ -79,7 +106,8 @@ class WriteExam extends Component
             {
                 clearInterval(this.myInterval)
                 this.setState({
-                    isExamFinished:true
+                    isExamFinished:true,
+                    doLoadExam:false
                 })
                 this.getScores();
             }
@@ -87,21 +115,30 @@ class WriteExam extends Component
             {
                 this.setState({
                     isExamFinished:false,
+                    doLoadExam:true,
                     questions:reponse.data.questions,
-                    currentQuestion:reponse.data.questions[0].question,
-                    currentQuestionId:reponse.data.questions[0].qid,
-                    prevQuesId:reponse.data.questions[0].qid,
-                    optiona:reponse.data.questions[0].options[0],
-                    optionb:reponse.data.questions[0].options[1],
-                    optionc:reponse.data.questions[0].options[2],
-                    optiond:reponse.data.questions[0].options[3],
+                    
                     minutes:reponse.data.minutes
 
 
 
                 },function() {
                     console.log("im in highlight")
-                    this.highlightCurrent()}
+                    let shuffledQuestions=this.shuffleQuestions(this.state.questions)
+                    this.setState({
+                        questions:shuffledQuestions,
+                        prevQuesId:1,
+                        currentQuestionId:1,
+
+                        currentQuestion:this.state.questions[0].question,
+                        optiona:this.state.questions[0].options[0],
+                        optionb:this.state.questions[0].options[1],
+                        optionc:this.state.questions[0].options[2],
+                        optiond:this.state.questions[0].options[3],
+
+                        
+                    },this.highlightCurrent())
+                    }
                  ,$(window).on("blur focus", function(e) {
                     var prevType = $(this).data("prevType");
                     var count=0
@@ -126,29 +163,33 @@ class WriteExam extends Component
                     }
                 
                     $(this).data("prevType", e.type);
-                })
+                }),
+                
+
+                
+                this.myInterval = setInterval(() => {
+                    const { seconds, minutes } = this.state
+                    if (seconds > 0) {
+                      this.setState(({ seconds }) => ({
+                        seconds: seconds - 1
+                      }))
+                    }
+                    if (seconds === 0) {
+                      if (minutes === 0) {
+                        clearInterval(this.myInterval)
+                      } else {
+                        this.setState(({ minutes }) => ({
+                          minutes: minutes - 1,
+                          seconds: 59
+                        }))
+                      }
+                    }
+                  }, 1000)
                  )
             }
         })
 
-        this.myInterval = setInterval(() => {
-            const { seconds, minutes } = this.state
-            if (seconds > 0) {
-              this.setState(({ seconds }) => ({
-                seconds: seconds - 1
-              }))
-            }
-            if (seconds === 0) {
-              if (minutes === 0) {
-                clearInterval(this.myInterval)
-              } else {
-                this.setState(({ minutes }) => ({
-                  minutes: minutes - 1,
-                  seconds: 59
-                }))
-              }
-            }
-          }, 1000)
+        
           
 
        
@@ -166,14 +207,32 @@ class WriteExam extends Component
         }
     highlightCurrent()
     {
-        document.getElementById(this.state.prevQuesId+'qnum').style.backgroundColor="#00ccff"
-        document.getElementById(this.state.currentQuestionId+'qnum').style.backgroundColor="#66ff33"
+        console.log("prev------------------"+this.state.prevQuesId+'qnum')
+        console.log("currr------------------"+this.state.currentQuestionId+'qnum')
+
+        if(this.state.prevQuesId==='' && this.state.currentQuestionId==='')
+        {
+            document.getElementById(this.state.questions[0].qid+'qnum').style.backgroundColor="#00ccff"
+            document.getElementById(this.state.questions[0].qid+'qnum').style.backgroundColor="#66ff33"    
+        }
+        else
+        {
+            document.getElementById(this.state.prevQuesId+'qnum').style.backgroundColor="#00ccff"
+            document.getElementById(this.state.currentQuestionId+'qnum').style.backgroundColor="#66ff33"
+
+        }
+        
+
+        
     }
     
     handleQuestionClicked= (e) => {
+        //if and else conditions are used to check whether option is already selected
         let qindex=e.currentTarget.id;
+        console.log("qindex-----------------------------------"+qindex)
         if(!this.state.answers[qindex])
         {   
+            console.log("im in if------------------")
             document.getElementById('a').style.background="#fff"
             document.getElementById('b').style.background="#fff"
             document.getElementById('c').style.background="#fff"
@@ -182,6 +241,7 @@ class WriteExam extends Component
         }
         else
         {
+            console.log("im in else------------------")
             console.log(this.state.answers[qindex])
             var existingoption=this.state.answers[qindex].selectedOption
             document.getElementById(existingoption).style.background="#66ff66"
@@ -198,14 +258,16 @@ class WriteExam extends Component
         this.setState({
             
             currentQuestion:this.state.questions[qindex-1].question,
+                
                 prevQuesId:this.state.currentQuestionId,
-                currentQuestionId:this.state.questions[qindex-1].qid,
+                currentQuestionId:qindex,
                 optiona:this.state.questions[qindex-1].options[0],
                 optionb:this.state.questions[qindex-1].options[1],
                 optionc:this.state.questions[qindex-1].options[2],
                 optiond:this.state.questions[qindex-1].options[3],
         },function() {
             console.log("im in highlight")
+            console.log(this.state.currentQuestion)
             this.highlightCurrent()})
       }
     handleOptionClicked = (e) =>{
@@ -247,13 +309,45 @@ class WriteExam extends Component
   
         });
     }
+
+    autoSubmit()
+    {
+        clearInterval(this.myInterval)
+        console.log("im in autosubmit---------------------------------------------")
+        this.setState({
+            minutes:-1,
+            isExamFinished:true
+        })
+    
+            
+             OAPAuthenticationService.submitExam(this.state.currentExamId,this.state.studentId,moment(new Date()).format('DD-MM-YYYY HH:mm:ss '),this.state.answers)
+             .then( (response) =>{
+                 console.log(response);
+                 this.getScores()
+                 //window.location.reload()                
+            },)
+        
+         
+         
+    }
+
     submitExam()
     {
-        console.log("exam submitted");
-        this.toggle()
-        OAPAuthenticationService.submitExam(this.state.currentExamId,this.state.studentId,Date.now(),this.state.answers)
+        this.toggleLoading()
+        console.log("im in submitExam-----------------------------------------------------");
+        
+        OAPAuthenticationService.submitExam(this.state.currentExamId,this.state.studentId,moment(new Date()).format('DD-MM-YYYY HH:mm:ss '),this.state.answers)
          .then( (response) =>{
-             console.log(response);
+            console.log(response);
+            
+            this.setState({
+                isExamFinished:true,
+                submissionDate:response.data.submittedDate,
+                correct:response.data.correct,
+                incorrect:response.data.incorrect,
+                total:response.data.total,
+                score:response.data.score,
+            },window.location.reload())
          })
     }
     getScores()
@@ -268,6 +362,7 @@ class WriteExam extends Component
                  {
                         console.log(response);
                         this.setState({
+                            isExamFinished:true,
                             submissionDate:response.data.submittedDate,
                             correct:response.data.correct,
                             incorrect:response.data.incorrect,
@@ -287,105 +382,128 @@ class WriteExam extends Component
         if(this.state.isExamFinished)
         {
             return(
-                <div>
+                <div >
+                    
                     <div class="alert alert-danger" role="alert">
-                        Your Exam is already finished!
+                        Your Exam had finished!
                     </div>
+                    
                     
                     <ResultsComponent AssessmentID={this.state.currentExamId} Subject="OOAD" date={this.state.submissionDate} correct={this.state.correct} incorrect={this.state.incorrect} score={this.state.score} total={this.state.total} />
                 </div>
             )
         }
-        return(
-            
-            <div className="container-fluid">
-
-
-                <Modal isOpen={this.state.modal} toggle={this.toggle}
-                       fade={this.state.fade}
-                       className={this.props.className}>
-                    <ModalHeader toggle={this.toggle}> 
-                    
-                    <h3 style={{marginLeft:"50px"}}>Do you want Submit exam?</h3>
-
-
-                    </ModalHeader>
-                    <ModalBody>
-
-                    
-                    <div className="col-sm-10 col-12" style={{paddingLeft:"150px"}}>
-                            <span id="quote">
-                                { minutes === 0 && seconds === 0? this.submitExam()
-                            : <span >Time Left: {minutes}:{seconds < 10 ? `0${seconds}` : seconds}</span>}</span>
-                        </div>
-
-
-                    </ModalBody>
-                    <ModalFooter>
-                        <Button color="primary" onClick={this.submitExam}>Submit Exam</Button>{' '}
-                        <Button color="secondary" onClick={this.toggle}>Cancel</Button>
-                    </ModalFooter>
-                </Modal>
-            <div>
-                <div className="container ">
-                    <div className="get-quote">
-                    <div className="row examheader" >
-                        <div className="col-sm-10 col-12" style={{paddingLeft:"200px"}}>
-                            <h3 id="quote">
-                                { minutes === 0 && seconds === 0? this.submitExam()
-                            : <h3 >Time Remaining: {minutes}:{seconds < 10 ? `0${seconds}` : seconds}</h3>
-                    }</h3>
-                        </div>
-                        <div className="col-sm-2 col-12 ">
-                            <button type="button" onClick={this.toggle} className=" btn btn-info pull-right mybtn" style={{marginLeft:"175px",marginTop:"5px"}}>Submit</button>
-                        </div>
-                    </div>
-                </div>
-            </div>
+        if(this.state.doLoadExam)
+        {
+            return(
                 
-            </div>
-            <div className="row examarea">
-                <div className="col-lg-3" id="left">
-                    <div className="box" >
-                        {
-                            this.state.questions.map(
-                                question =>
-                                <div className=" card  qlist" id={question.qid} key={question.qid} onClick={this.handleQuestionClicked} >
-                                    <div className="col qnum" id={question.qid+'qnum'}>{question.qid}</div>
-                                    <div className="col-11">{question.question.substring(0,50)}{question.question.length>50 && '...'}</div>
-                                   
-                                </div>
+                <div className="container-fluid">
+
+
+                    <Modal isOpen={this.state.modal} toggle={this.toggle}
+                        fade={this.state.fade}
+                        className={this.props.className}>
+                        <ModalHeader toggle={this.toggle}> 
+                        
+                        <h3 style={{marginLeft:"50px"}}>Do you want Submit exam?</h3>
+
+
+                        </ModalHeader>
+                        <ModalBody>
+
+                        
+                        <div className="col-sm-10 col-12" style={{paddingLeft:"150px"}}>
+                                <span id="quote">
+                                    
+                                : <span >Time Left: {minutes}:{seconds < 10 ? `0${seconds}` : seconds}</span></span>
+                            </div>
+
+
+                        </ModalBody>
+                        <ModalFooter>
+                            <Button color="primary" disabled={this.state.isLoading} onClick={this.submitExam}>
                                 
-                            )
-                        }
+                                
+                                
+                                {this.state.isLoading && <CircularProgress size={20} color="#" /> }
+                                {!this.state.isLoading && "Submit Exam"}
+                            
+                            
+                            </Button>{' '}
+
+                            <Button color="secondary" onClick={this.toggle}>Cancel</Button>
+                        </ModalFooter>
+                    </Modal>
+                <div>
+                    <div className="container ">
+                        <div className="get-quote">
+                        <div className="row examheader" >
+                            <div className="col-sm-10 col-12" style={{paddingLeft:"200px"}}>
+                                <h3 id="quote">
+                                    { minutes === 0 && seconds === 0? this.autoSubmit()
+                                : <h3 >Time Remaining: {minutes}:{seconds < 10 ? `0${seconds}` : seconds}</h3>
+                        }</h3>
+                            </div>
+                            <div className="col-sm-2 col-12 ">
+                                <button type="button" onClick={this.toggle} className=" btn btn-info pull-right mybtn" style={{marginLeft:"175px",marginTop:"5px"}}>Submit</button>
+                            </div>
+                        </div>
                     </div>
                 </div>
-                <div className="col-lg-9 " id="right" >
-                        
-                       
-                        <div id="fitin" className="questionArea">
-                        <span >{this.state.currentQuestionId+"."+this.state.currentQuestion}</span>
-                        </div>
-
-
-                        <div className="row justify-content-center ">
-                            <div className="card  optionarea col-4 " id="a" onClick={this.handleOptionClicked}>{this.state.optiona}</div>
-                            <div className="card optionarea col-4" id="b" onClick={this.handleOptionClicked}>{this.state.optionb}</div>
-                        </div><br></br>
-                        <div className="row justify-content-center">
-                            <div className="card optionarea col-4" id="c" onClick={this.handleOptionClicked}>{this.state.optionc}</div>
-                            <div className="card optionarea col-4" id="d" onClick={this.handleOptionClicked}>{this.state.optiond}</div>
-
-                        </div>
-
-                         
-                   
-
+                    
                 </div>
-            </div>
-            </div>
-            
-            
+                <div className="row examarea">
+                    <div className="col-lg-3" id="left">
+                        <div className="box" >
+                            {
+                                console.log(this.state.questions),
+                                this.state.questions.map(
+                                    (question,index) =>
+                                        
+                                        <div className=" card  qlist" id={index+1} key={question.qid} onClick={this.handleQuestionClicked} >
+                                        <div className="col qnum" id={(index+1)+'qnum'}>{index+1}</div>
+                                        <div className="col-11">{question.question.substring(0,50)}{question.question.length>50 && '...'}</div>
+                                    
+                                    </div>
+
+                                    
+                                    
+                                    
+                                    
+                                )
+                            }
+                        </div>
+                    </div>
+                    <div className="col-lg-9 " id="right" >
+                            
+                        
+                            <div id="fitin" className="questionArea">
+                            <span >{this.state.currentQuestionId+"."+this.state.currentQuestion}</span>
+                            </div>
+
+
+                            <div className="row justify-content-center ">
+                                <div className="card  optionarea col-4 " id="a" onClick={this.handleOptionClicked}>{this.state.optiona}</div>
+                                <div className="card optionarea col-4" id="b" onClick={this.handleOptionClicked}>{this.state.optionb}</div>
+                            </div><br></br>
+                            <div className="row justify-content-center">
+                                <div className="card optionarea col-4" id="c" onClick={this.handleOptionClicked}>{this.state.optionc}</div>
+                                <div className="card optionarea col-4" id="d" onClick={this.handleOptionClicked}>{this.state.optiond}</div>
+
+                            </div>
+
+                            
+                    
+
+                    </div>
+                </div>
+                </div>
+                
+                
+            )
+        }
+        return (
+            <div class="loading">Loading&#8230;</div>
         )
     }
 

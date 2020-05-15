@@ -7,11 +7,9 @@ import { Spinner } from "./common/components/spinner";
 import * as serviceWorker from './serviceWorker';
 
 ReactDOM.render(
-  <React.StrictMode>  
      
     <App />
-   
-  </React.StrictMode>,
+   ,
   document.getElementById('root')
 );
 

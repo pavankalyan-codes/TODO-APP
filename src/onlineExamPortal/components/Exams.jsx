@@ -35,7 +35,8 @@ class Exams extends Component{
     {
         return(
             <div  style={{marginLeft:"280px",marginRight:"50px",paddingTop:"90px",height:"100%"}}>
-                
+                <link href="https://cdnjs.cloudflare.com/ajax/libs/bulma/0.6.1/css/bulma.min.css" rel="stylesheet"/>
+
                 <div className="row" >
 
 

@@ -1,6 +1,9 @@
 import React,{ Component } from "react";
 import moment from 'moment'
 import '../../App.css' 
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
+import {  faCheckCircle } from '@fortawesome/free-solid-svg-icons'
+import {  faTimesCircle } from '@fortawesome/free-solid-svg-icons'
 
 class ResultsComponent extends Component
 {
@@ -11,7 +14,6 @@ class ResultsComponent extends Component
 
 
                
-                    <script defer src="https://use.fontawesome.com/releases/v5.3.1/js/all.js"></script>
 
                 <table class="table table-bordered">
                 <thead>
@@ -22,13 +24,16 @@ class ResultsComponent extends Component
                     <th scope="col">
                         Correct answers
                         <span class="icon has-text-success">
-                        <i class="fas fa-check-circle myicon"></i>
+                        <FontAwesomeIcon icon={faCheckCircle} className="myicon" />
+
+                        
+
                         </span>
                     </th>
                     <th scope="col">
                         Incorrect answers
                         <span class="icon has-text-danger">
-                        <i class="fas fa-times-circle mywrongicon"></i>
+                        <FontAwesomeIcon icon={faTimesCircle} className="mywrongicon" />
                         </span>
                     </th>
                     <th scope="col">Total Score</th>
@@ -38,7 +43,7 @@ class ResultsComponent extends Component
                     <tr>
                     <td >{this.props.AssessmentID}</td>
                     <td>{this.props.Subject}</td>
-                    <td>{moment(this.props.date).format('DD-MM-YYYY HH:mm:ss ')}</td>
+                    <td>{this.props.date}</td>
                     <td>{this.props.correct}</td>
                     <td>{this.props.incorrect}</td>
                     <td>{this.props.score}/{this.props.total}</td>

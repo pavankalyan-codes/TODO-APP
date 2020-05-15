@@ -12,7 +12,8 @@ class Home extends Component{
     {
         return(
             <div className="homebg"  >
-                 
+                                 <link href="https://cdnjs.cloudflare.com/ajax/libs/bulma/0.6.1/css/bulma.min.css" rel="stylesheet"/>
+
             </div>
 
             
