@@ -43,6 +43,8 @@ class WriteExam extends Component
             score:'',
 
 
+
+            jumbledQid:'',
             currentQuestion:0,
             currentQuestionId:'',
             prevQuesId:'',
@@ -130,6 +132,7 @@ class WriteExam extends Component
                         prevQuesId:1,
                         currentQuestionId:1,
 
+                        jumbledQid:this.state.questions[0].qid,
                         currentQuestion:this.state.questions[0].question,
                         optiona:this.state.questions[0].options[0],
                         optionb:this.state.questions[0].options[1],
@@ -139,7 +142,8 @@ class WriteExam extends Component
                         
                     },this.highlightCurrent())
                     }
-                 ,$(window).on("blur focus", function(e) {
+                 ,
+                 $(window).on("blur focus", function(e) {
                     var prevType = $(this).data("prevType");
                     var count=0
                     if (prevType != e.type) {   //  reduce double fire issues
@@ -257,8 +261,8 @@ class WriteExam extends Component
         }
         this.setState({
             
-            currentQuestion:this.state.questions[qindex-1].question,
-                
+                currentQuestion:this.state.questions[qindex-1].question,
+                jumbledQid:this.state.questions[qindex-1].qid,
                 prevQuesId:this.state.currentQuestionId,
                 currentQuestionId:qindex,
                 optiona:this.state.questions[qindex-1].options[0],
@@ -281,7 +285,7 @@ class WriteExam extends Component
         console.log("new arr"+newarr)
         
 
-        var newInp={"qid":this.state.currentQuestionId,"submittedresponse": ans,"selectedOption":opindex}
+        var newInp={"qid":this.state.jumbledQid,"submittedresponse": ans,"selectedOption":opindex}
         newarr[this.state.currentQuestionId]=newInp
         this.setState({
             answers:newarr

@@ -34,19 +34,25 @@ class Exams extends Component{
     render()
     {
         return(
-            <div  style={{marginLeft:"280px",marginRight:"50px",paddingTop:"90px",height:"100%"}}>
+            <div>
                 <link href="https://cdnjs.cloudflare.com/ajax/libs/bulma/0.6.1/css/bulma.min.css" rel="stylesheet"/>
 
+
+                <div class = "page-header" style={{marginLeft:"250px"}}>
+                    <h1 className="title">
+                        Ongoing Exams
+                        
+                    </h1>
+                </div>
+                <hr></hr>
+            <div  style={{marginLeft:"280px",marginRight:"50px",height:"100%"}}>
+
+
+                
                 <div className="row" >
-
-
-
-
-                {
-                            
-                            this.state.Exams.map(
+                {       this.state.Exams.map(
                                 exam =>
-                                <div class=" card border border-info rounded-lg myexcard" style={{width: "160px",height:"200px",marginLeft:"30px",marginTop:"30px"}}>
+                                <div class=" card border border-info rounded-lg myexcard" style={{width: "160px",height:"200px",marginLeft:"30px",marginTop:"10px"}}>
                                     <img src={examImg} class="card-img-top" alt="..." style={{height:"100px"}}></img>
                                     <div class="card-body text-center">
                                         <span style={{fontSize:"15px"}} class="card-title">{exam._id}</span>
@@ -66,6 +72,7 @@ class Exams extends Component{
 
 
                 </div>
+            </div>
             </div>
 
             
